@@ -17,7 +17,8 @@
             "version": "none",
             "dotnetRuntimeVersions": "7.0",
             "aspNetCoreRuntimeVersions": "7.0"
-        }
+        },
+        "ghcr.io/devcontainers/features/node:1": {}
     },
     "customizations": {
         "vscode": {
