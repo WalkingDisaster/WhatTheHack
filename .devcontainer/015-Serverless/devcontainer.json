@@ -18,7 +18,8 @@
             "dotnetRuntimeVersions": "7.0",
             "aspNetCoreRuntimeVersions": "7.0"
         },
-        "ghcr.io/devcontainers/features/node:1": {}
+        "ghcr.io/devcontainers/features/node:1": {},
+        "ghcr.io/devcontainers/features/azure-cli:1": {}
     },
     "customizations": {
         "vscode": {
