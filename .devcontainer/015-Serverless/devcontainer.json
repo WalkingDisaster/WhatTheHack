@@ -19,13 +19,17 @@
             "aspNetCoreRuntimeVersions": "7.0"
         },
         "ghcr.io/devcontainers/features/node:1": {},
-        "ghcr.io/devcontainers/features/azure-cli:1": {}
+        "ghcr.io/devcontainers/features/azure-cli:1": {},
+        "ghcr.io/jlaundry/devcontainer-features/azure-functions-core-tools:1": {}
     },
     "customizations": {
         "vscode": {
             "extensions": [
                 "ms-dotnettools.vscode-dotnet-runtime",
-                "ms-dotnettools.csdevkit"
+                "ms-dotnettools.csdevkit",
+                "ms-vscode.vscode-node-azure-pack",
+                "ms-vscode-remote.remote-containers",
+                "davidanson.vscode-markdownlint"
             ]
         }
     },
