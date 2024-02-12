@@ -1,19 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
 
-namespace TollBooth.Models
+namespace TollBooth.Models;
+
+public class LicensePlateData
 {
-    public class LicensePlateData
-    {
-        [JsonProperty(PropertyName = "fileName")]
-        public string FileName { get; set; }
-        [JsonProperty(PropertyName = "licensePlateText")]
-        public string LicensePlateText { get; set; }
-        [JsonProperty(PropertyName = "timeStamp")]
-        public DateTime TimeStamp { get; set; }
-        [JsonProperty(PropertyName = "licensePlateFound")]
-        public bool LicensePlateFound => !string.IsNullOrWhiteSpace(LicensePlateText);
-    }
+    public string FileName { get; set; }
+    public string LicensePlateText { get; set; }
+    public DateTime TimeStamp { get; set; }
+    public bool LicensePlateFound => !string.IsNullOrWhiteSpace(LicensePlateText);
 }

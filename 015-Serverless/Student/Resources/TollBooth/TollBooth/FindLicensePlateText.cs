@@ -1,42 +1,41 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Drawing;
+﻿using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using TollBooth.Models;
 using Polly;
 using Polly.CircuitBreaker;
 using Polly.Wrap;
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
+using System.Threading;
+using Azure.Identity;
 
 namespace TollBooth
 {
     public class FindLicensePlateText
     {
+        private readonly ComputerVisionClient _xclient;
         private readonly HttpClient _client;
         private readonly ILogger _log;
 
-        public FindLicensePlateText(ILogger log, HttpClient client)
+        public FindLicensePlateText(ILogger log, HttpClient client, ComputerVisionClient xclient)
         {
             _log = log;
             _client = client;
+            _xclient = xclient;
         }
 
-        public async Task<string> GetLicensePlate(byte[] imageBytes)
+        public async Task<string> GetLicensePlate(byte[] imageBytes, CancellationToken cancellationToken)
         {
-            return await MakeOCRRequest(imageBytes);
+            return await MakeOCRRequest(imageBytes, cancellationToken);
         }
 
-        private async Task<string> MakeOCRRequest(byte[] imageBytes)
+        private async Task<string> MakeOCRRequest(byte[] imageBytes, CancellationToken cancellationToken)
         {
             _log.LogInformation("Making OCR request");
             var licensePlate = string.Empty;
@@ -46,6 +45,9 @@ namespace TollBooth
             // TODO 2: Populate the below two variables with the correct AppSettings properties.
             var uriBase = Environment.GetEnvironmentVariable("");
             var apiKey = Environment.GetEnvironmentVariable("");
+
+            // TODO: new way?
+            var y = await _xclient.RecognizePrintedTextAsync(true, "url", OcrLanguages.Unk, cancellationToken: cancellationToken);
 
             var resiliencyStrategy = DefineAndRetrieveResiliencyStrategy();
 

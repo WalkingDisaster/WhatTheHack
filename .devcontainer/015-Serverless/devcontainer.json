@@ -32,7 +32,8 @@
                 "ms-dotnettools.csdevkit",
                 "ms-vscode.vscode-node-azure-pack",
                 "ms-vscode-remote.remote-containers",
-                "davidanson.vscode-markdownlint"
+                "davidanson.vscode-markdownlint",
+                "gruntfuggly.todo-tree"
             ]
         }
     },

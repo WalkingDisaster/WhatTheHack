@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
-using System.Configuration;
 using System.Net;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;

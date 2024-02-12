@@ -9,12 +9,12 @@
 
 using System;
 using System.IO;
-using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.EventGrid;
 using Azure.Messaging.EventGrid.SystemEvents;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.EventGrid;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Blob;
 using TollBooth.Models;
@@ -23,7 +23,6 @@ namespace TollBooth
 {
     public static class ProcessImage
     {
-        private static HttpClient _client;
         private static string GetBlobNameFromUrl(string bloblUrl)
         {
             var uri = new Uri(bloblUrl);
@@ -32,14 +31,17 @@ namespace TollBooth
         }
 
         [FunctionName("ProcessImage")]
-        public static async Task Run([EventGridTrigger]EventGridEvent eventGridEvent,
-            [Blob(blobPath: "{data.url}", access: FileAccess.Read,
-                Connection = "blobStorageConnection")] Stream incomingPlate,
-            ILogger log)
+        public static async Task Run([EventGridTrigger] EventGridEvent eventGridEvent,
+            //[BlobTrigger(blobPath: "{dat.url}", access: FileAccess.Read, Connection = "blobStorageConnection")]
+            [BlobTrigger("{data.url}", Connection = "blobStorageConnection")]
+            Stream incomingPlate,
+            SendToEventGrid sendToEventGrid,
+            ILogger log,
+            CancellationToken cancellationToken)
         {
             var licensePlateText = string.Empty;
             // Reuse the HttpClient across calls as much as possible so as not to exhaust all available sockets on the server on which it runs.
-            _client = _client ?? new HttpClient();
+            // _client ??= new HttpClient();
 
             try
             {
@@ -61,12 +63,12 @@ namespace TollBooth
                     // COMPLETE: licensePlateText = await new.....
 
                     // Send the details to Event Grid.
-                    await new SendToEventGrid(log, _client).SendLicensePlateData(new LicensePlateData()
+                    await sendToEventGrid.SendLicensePlateData(new LicensePlateData
                     {
                         FileName = name,
                         LicensePlateText = licensePlateText,
                         TimeStamp = DateTime.UtcNow
-                    });
+                    }, cancellationToken);
                 }
             }
             catch (Exception ex)
@@ -75,7 +77,7 @@ namespace TollBooth
                 throw;
             }
 
-            log.LogInformation($"Finished processing. Detected the following license plate: {licensePlateText}");
+            log.LogInformation("Finished processing. Detected the following license plate: {licensePlateText}", licensePlateText);
         }
     }
 }
